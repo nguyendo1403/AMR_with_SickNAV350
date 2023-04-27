@@ -1,0 +1,50 @@
+<launch>
+
+
+
+  <!-- Khởi chạy node get_data_odom.cpp -->
+  <!-- Subscribe: /initialpose, /move_base_simple/goal -->
+  <!-- Publish: /initial_2d, /goal_2d --> 
+  <node name="get_rviz_pose" pkg="tên package chứa get_rviz_pose.cpp" type="get_rviz_pose.cpp">
+  </node>
+
+  <!-- Khởi chạy node get_data_odom.cpp -->
+  <!-- Subscribe: /odom, /goal_2d -->
+  <!-- Publish: /vel_amr --> 
+  <node name="get_data_odom" pkg="tên package chứa file get_data_odom.cpp" type="get_data_odom.cpp">
+  </node>
+
+  <!-- Khởi tạo node đưa vị trí hiện tại của robot vào move_base với chủ đề là /odom có kiểu dữ nav_msgs/Odometry để đưa vào package move_base-->
+  <node name="tf2_to_ODOM_TOPIC" pkg="package chứa file" type="tf_to_ODOM_TOPIC.py">
+  </node>
+
+  <!-- Initial Pose and Goal Publisher -->
+  <!-- Publish: /initialpose, /move_base_simple/goal -->
+  <node pkg="rviz" type="rviz" name="rviz" args="$(find your_package)/maps/your_map.rviz">
+  </node> 
+
+  <!-- Map File -->
+  <arg name="map_file" default="$(find your_package)/maps/yourmap.yaml"/>
+	
+  <!-- Map Server -->
+  <!-- Publish: /map, /map_metadata -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" />
+
+
+
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
