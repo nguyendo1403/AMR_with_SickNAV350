@@ -93,12 +93,12 @@ void setVelocity() {
  
 // This callback function updates the current position and 
 // orientation of the robot. 
-void Get_Odometry(const nav_msgs::Odometry::ConstPtr& Odometry_data)
+void Get_Odometry(const geometry_msgs::Pose2D &odometry)
 {
   double current = odom_msg.geometry_msgs.Pose2D;
-  current.x =  Odometry_data.pose.pose.position.y;
-  current.y =  Odometry_data.pose.pose.position.y;
-  current.theta =  Odometry_data.pose.pose.orientation.z;
+  current.x =  odometry.x;
+  current.y =  odometry.y;
+  current.theta =  odometry.theta;
 }
 
  
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 
   ros::init(argc, argv, "caculate_data");
   ros::NodeHandle n;
-  ros::Subscriber sub = n.subscribe("odom", 1000, Get_Odometry);
+  ros::Subscriber sub = n.subscribe("ODOM_TOPIC", 1000, Get_Odometry);
   ros::Subscriber waypointPoseSub = n.subscribe("goal_2d", 0, updateWaypoint, 
     ros::TransportHints().tcpNoDelay());
   velocityPub = node.advertise<geometry_msgs::Twist>("vel_amr", 0);
