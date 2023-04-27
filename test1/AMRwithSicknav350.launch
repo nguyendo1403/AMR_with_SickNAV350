@@ -17,8 +17,8 @@
   <!-- Khởi chạy node get_data_odom.cpp -->
   <!-- Subscribe: /odom, /goal_2d -->
   <!-- Publish: /vel_amr --> 
-  <node name="get_data_odom" pkg="tên package chứa file get_data_odom.cpp" type="get_data_odom.cpp">
-  </node>
+  <!-- <node name="get_data_odom" pkg="tên package chứa file get_data_odom.cpp" type="get_data_odom.cpp">
+  </node> -->
 
   <!-- Khởi tạo node đưa vị trí hiện tại của robot vào move_base với chủ đề là /odom có kiểu dữ nav_msgs/Odometry để đưa vào package move_base-->
   <node name="tf2_to_odom" pkg="package chứa file" type="tf_to_odom.py">
