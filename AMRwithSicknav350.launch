@@ -1,0 +1,95 @@
+<launch>
+
+  <!-- Transformation Configuration ... Setting Up the Relationships Between Coordinate Frames --> 
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser" args="0.4 0 2.3 0 0 0 base_link laser 30" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_broadcaster" args="0 0 0 0 0 0 base_footprint base_link 30" />
+  <!-- odom to base_footprint transform will be provided by the robot_pose_ekf node -->
+  <!-- map to odom will be provided by the AMCL -->
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 30" />
+
+
+  <!-- Khởi chạy node get_data_odom.cpp -->
+  <!-- Subscribe: /odom, /goal_2d -->
+  <!-- Publish: /vel_amr --> 
+  <node name="get_data_odom" pkg="tên package chứa file get_data_odom.cpp" type="get_data_odom.cpp">
+  </node>
+
+
+  <!-- Khởi chạy node get_data_odom.cpp -->
+  <!-- Subscribe: /initialpose, /move_base_simple/goal -->
+  <!-- Publish: /initial_2d, /goal_2d --> 
+  <node name="get_rviz_pose" pkg="tên package chứa get_rviz_pose.cpp" type="get_rviz_pose.cpp">
+  </node>
+
+
+
+
+
+  <!-- Khởi tạo node đưa vị trí hiện tại của robot vào move_base với chủ đề là /odom có kiểu dữ nav_msgs/Odometry-->
+  <node name="tf2_to_odom" pkg="package chứa file" type="tf_to_odom.py">
+  </node>
+
+
+  <!-- Initial Pose and Goal Publisher -->
+  <!-- Publish: /initialpose, /move_base_simple/goal -->
+  <node pkg="rviz" type="rviz" name="rviz" args="$(find your_package)/maps/your_map.rviz">
+  </node> 
+
+
+
+
+
+  <!-- Map File -->
+  <arg name="map_file" default="$(find your_package)/maps/yourmap.yaml"/>
+	
+  <!-- Map Server -->
+  <!-- Publish: /map, /map_metadata -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)" />
+
+
+
+  <!-- Khởi tạo node "amcl" để phục vụ cho localisation -->
+  <!-- <node name="amcl" pkg="amcl" type="amcl" output="screen"> -->
+  <!-- Add AMCL example for differential drive robots for Localization -->
+  <!-- Subscribe: /scan, /tf, /initialpose, /map -->
+  <!-- Publish: /amcl_pose, /particlecloud, /tf -->
+  <include file="$(find amcl)/examples/amcl_diff.launch"/>
+
+
+  <!-- Khởi tạo node "move_base" để điều khiển robot di chuyển đến một vị trí đích -->
+  <node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+    <!-- Sử dụng plugin "navfn" để tính toán đường đi từ vị trí hiện tại của robot đến vị trí đích -->
+    <rosparam file="$(find your_package)/config/navfn_params.yaml" command="load" ns="navfn_params" />
+    <!-- Cấu hình các frame_id cần thiết cho move_base -->
+    <rosparam file="$(find navstack_pub)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find navstack_pub)/param/costmap_common_params.yaml" command="load" ns="local_costmap" /> 
+  </node>
+
+</launch>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- Khởi tạo node "move_base" để điều khiển robot di chuyển đến một vị trí đích
+  <node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+    <!-- Sử dụng plugin "navfn" để tính toán đường đi từ vị trí hiện tại của robot đến vị trí đích -->
+    <rosparam file="$(find your_package)/config/navfn_params.yaml" command="load" />
+    <!-- Cấu hình các frame_id cần thiết cho move_base -->
+    <param name="global_frame_id" value="map"/>
+    <param name="robot_base_frame_id" value="base_link"/>
+    <param name="local_costmap/footprint" value="$(find your_package)/config/costmap_common_params.yaml"/>
+    <param name="global_costmap/footprint" value="$(find your_package)/config/costmap_common_params.yaml"/>
+  </node>
+
+</launch> -->

@@ -1,0 +1,103 @@
+local_costmap:
+  update_frequency: 30.0
+  publish_frequency: 30.0
+  transform_tolerance: 0.2
+  static_map: false
+  rolling_window: true
+  resolution: 0.1
+  inflation_radius: 0.1
+  width: 1.0
+  height: 1.0
+
+  plugins:
+    - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
+
+  obstacle_layer:
+    observation_sources: laser_scan_sensor
+    laser_scan_sensor: {sensor_frame: laser, data_type: LaserScan, topic: scan, marking: true, clearing: true}
+
+
+
+
+###################################################################################
+
+
+# Navigation function planner parameters
+# http://wiki.ros.org/navfn
+# Robot radius
+robot_radius: 0.25
+
+# Cost function weight for the robot footprint
+footprint_cost: 1.0
+
+# Weight to apply to heading change (default: 0.0)
+heading_cost: 0.0
+
+# Weight to apply to goal distance (default: 0.0)
+goal_distance_cost: 0.0
+
+# Weight to apply to forward distance (default: 0.0)
+forward_point_distance_cost: 0.0
+
+# Weight to apply to reverse distance (default: 0.0)
+reverse_point_distance_cost: 0.0
+
+# Weight to apply to the cost of passing through a cell (default: 1.0)
+cost_factor: 1.0
+
+# Use a diagonal distance heuristic (default: true)
+use_dijkstra: true
+
+# Set the inscribed radius for the robot
+inscribed_radius: 0.2
+
+# Set the circumscribed radius for the robot
+circumscribed_radius: 0.3
+
+# Use the default scaling factor for the costmap
+cost_scaling_factor: 3.0
+
+# Inflate the costmap around the robot to a certain distance
+inflation_radius: 0.5
+
+
+
+
+#################################################################################################
+controller_frequency: 5.0  # Tần suất điều khiển đường đi
+planner_frequency: 0.5     # Tần suất lập kế hoạch đường đi
+potential_weight: 0.5     # Trọng số tiềm năng trong tính toán đường đi
+lethal_obstacle: 100      # Giá trị trở ngại chết
+neutral_obstacle: 50      # Giá trị trở ngại không ảnh hưởng
+
+
+
+ # Viết lệnh sau trong file launch
+<launch>
+  <rosparam file="$(find my_package)/config/navfn_params.yaml" command="load"/>
+  
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+    <param name="base_global_planner" value="navfn/NavfnROS"/>
+    <param name="controller_frequency" value="$(arg controller_frequency)"/>
+    <param name="planner_frequency" value="$(arg planner_frequency)"/>
+    <param name="NavfnROS/potential_weight" value="$(arg potential_weight)"/>
+    <param name="NavfnROS/latch_xy_goal_tolerance" value="true"/>
+    <param name="costmap_common/costmap_topic" value="move_base/costmap/costmap"/>
+  </node>
+</launch>
+
+
+#########################################################################
+<launch>
+  <!-- Khai báo các node cần thiết -->
+  <node pkg="move_base" type="move_base" name="move_base" output="screen">
+    <!-- Cấu hình move_base -->
+    <param name="base_global_planner" value="navfn/NavfnROS"/>
+    <!-- Các tham số khác của move_base -->
+  </node>
+</launch>
+
+
+
+
+###với file.yaml
