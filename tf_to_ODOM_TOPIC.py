@@ -1,4 +1,4 @@
-import rospy
+cd import rospy
 from tf2_msgs.msg import TFMessage
 from std_msgs.msg import Int32
 from geometry_msgs.msg import Pose2D
@@ -12,7 +12,7 @@ def callback(data):
     global pose
     pub = rospy.Publisher("ODOM_TOPIC",Int32,queue_size=10)
     for transform in data.transforms:
-            if transform.header.frame_id == 'map' and transform.child_frame_id == 'nav350'
+            if transform.header.frame_id == 'map' and transform.child_frame_id == 'nav350':
                pose.x = transform.transform.translation.x
                pose.y=transform.transform.translation.y
                pose.theta= transform.transform.rotation.z
